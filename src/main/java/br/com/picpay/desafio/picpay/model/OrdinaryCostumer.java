@@ -1,5 +1,6 @@
 package br.com.picpay.desafio.picpay.model;
 
+import br.com.picpay.desafio.picpay.dto.CostumerEnrollDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +23,13 @@ public class OrdinaryCostumer extends User{
 
     @OneToMany(mappedBy = "ordinaryCostumer", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
+
+    public OrdinaryCostumer(CostumerEnrollDTO dto){
+        this.CPF = dto.CPF();
+        this.setFullName(dto.fullName());
+        this.setBalance(dto.balance());
+        this.setEmail(dto.email());
+        this.setPassword(dto.password());
+    }
 
 }
