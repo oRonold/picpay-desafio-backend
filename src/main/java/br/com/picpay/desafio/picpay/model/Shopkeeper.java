@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,5 +32,6 @@ public class Shopkeeper extends User{
         this.setBalance(BigDecimal.ZERO);
         this.setEmail(dto.email());
         this.setPassword(dto.password());
+        this.transactions = new ArrayList<>();
     }
 }

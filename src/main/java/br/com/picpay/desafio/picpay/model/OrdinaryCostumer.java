@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,6 +31,7 @@ public class OrdinaryCostumer extends User{
         this.setBalance(dto.balance());
         this.setEmail(dto.email());
         this.setPassword(dto.password());
+        this.transactions = new ArrayList<>();
     }
 
 }
