@@ -7,10 +7,10 @@ import br.com.picpay.desafio.picpay.model.Transaction;
 import br.com.picpay.desafio.picpay.repository.OrdinaryCostumerRepository;
 import br.com.picpay.desafio.picpay.repository.ShopkeeperRepository;
 import br.com.picpay.desafio.picpay.repository.TransactionRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 public class TransactionService {
@@ -47,9 +47,8 @@ public class TransactionService {
         shopkeeper.getTransactions().add(transaction);
         shopkeeper.setBalance(shopkeeper.getBalance().add(dto.value()));
 
-        transactionRepository.save(transaction);
+        notification(costumer, transaction);
 
-        notificationService.notify(costumer);
         return transaction;
     }
 
@@ -57,4 +56,20 @@ public class TransactionService {
         OrdinaryCostumer costumer = costumerRepository.getReferenceById(dto.payer());
         return costumer.getBalance().compareTo(dto.value()) >= 0;
     }
+
+    private void notification(OrdinaryCostumer costumer, Transaction transaction){
+        Mono.defer(() -> Mono.fromCallable(() -> transactionRepository.save(transaction))
+                        .subscribeOn(Schedulers.boundedElastic()))
+                .flatMap(saved -> notificationService.notify(costumer)
+                        .filter(notificationSucess -> notificationSucess)
+                        .switchIfEmpty(Mono.error(new IllegalStateException("Notification failed, operation rollback")))
+                        .then(Mono.just(saved))
+                )
+                .onErrorResume(error -> {
+                    return Mono.fromRunnable(() -> transactionRepository.delete(transaction))
+                            .then(Mono.error(new IllegalStateException("Transaction rolled back due to failure")));
+                });
+    }
+
 }
+

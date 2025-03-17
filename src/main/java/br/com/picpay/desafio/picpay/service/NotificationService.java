@@ -17,10 +17,10 @@ public class NotificationService {
 
     public Mono<Boolean> notify(OrdinaryCostumer costumer){
         return webClient.post()
-                .bodyValue("{ \"email\": \"" + costumer.getEmail() + "\" }")
+                .bodyValue(costumer)
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(response -> response.contains("sucesso"))
-                .onErrorReturn(false);
+                .defaultIfEmpty(false);
     }
 }
