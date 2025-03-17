@@ -1,4 +1,4 @@
-package br.com.picpay.desafio.picpay.controller;
+package br.com.picpay.desafio.picpay.dto;
 
 import br.com.picpay.desafio.picpay.model.Shopkeeper;
 

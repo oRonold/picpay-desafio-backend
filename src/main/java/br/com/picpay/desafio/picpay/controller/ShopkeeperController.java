@@ -1,5 +1,6 @@
 package br.com.picpay.desafio.picpay.controller;
 
+import br.com.picpay.desafio.picpay.dto.ShopkeeperDetailsDTO;
 import br.com.picpay.desafio.picpay.dto.ShopkeeperEnrollDTO;
 import br.com.picpay.desafio.picpay.model.Shopkeeper;
 import br.com.picpay.desafio.picpay.service.ShopkeeperService;
